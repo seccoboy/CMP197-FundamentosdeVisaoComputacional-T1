@@ -1,7 +1,7 @@
 
 import cv2, numpy as np
 
-img = cv2.imread('testimages/photoDaphoto.jpg')
+img = cv2.imread('testimages/foto1_cap1.jpg')
 
 click_list = []
 
@@ -15,8 +15,10 @@ def click_event(event, x, y, flags, params):
     return [x,y]
 
 def main():
-    cv2.imshow('image', img)
-    cv2.setMouseCallback('image', click_event)
+    cv2.namedWindow("output", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("output", 1080, 720)
+    cv2.imshow('output', img)
+    cv2.setMouseCallback('output', click_event)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     return click_list

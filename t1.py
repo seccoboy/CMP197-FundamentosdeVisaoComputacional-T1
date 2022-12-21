@@ -4,7 +4,8 @@ import argparse
 import cv2
 import imageCoordinates
 
-image = cv2.imread('testimages/photoDaphoto.jpg')
+image = cv2.imread('testimages/foto1_cap1.jpg')
+imageOriginal = cv2.imread('testimages/foto1_gt.jpg')
 
 def order_points(pts):
     rect = np.zeros((4, 2), dtype = "float32")
@@ -41,7 +42,7 @@ def four_point_transform(image, pts):
 	return warped
 
 def main():
-   
+    print(imageOriginal.shape[0], imageOriginal.shape[1])
     click_list = imageCoordinates.main()
     rect = np.zeros((4, 2), dtype = "float32")
     rect[0] = click_list[0]
@@ -50,8 +51,13 @@ def main():
     rect[3] = click_list[3]
     warped = four_point_transform(image, rect)
     # show the original and warped images
-    cv2.imshow("Original", image)
+    cv2.namedWindow("Original", cv2.WINDOW_NORMAL)  
+    cv2.resizeWindow("Original", imageOriginal.shape[0], imageOriginal.shape[1])         
+    cv2.imshow("Original", imageOriginal)
+    cv2.namedWindow("Warped", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("Warped", imageOriginal.shape[0], imageOriginal.shape[1])         
     cv2.imshow("Warped", warped)
+    
     cv2.waitKey(0)
 
 main()

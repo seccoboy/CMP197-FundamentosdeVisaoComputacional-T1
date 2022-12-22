@@ -1,13 +1,12 @@
 import numpy as np
 from matplotlib import pyplot as plt
-import argparse
 import cv2
 
 image = cv2.imread('testimages/foto1_cap1.jpg')
 imageOriginal = cv2.imread('testimages/foto1_gt.jpg')
 click_list = []
 
-def click_event(event, x, y, flags, params):
+def getClicks(event, x, y, flags, params):
     # checking for left mouse clicks
     if event == cv2.EVENT_LBUTTONDOWN:
         click_list.append((x,y))
@@ -18,7 +17,7 @@ def getPoints():
     cv2.namedWindow("output", cv2.WINDOW_NORMAL)
     cv2.resizeWindow("output", 1080, 720)
     cv2.imshow('output', image)
-    cv2.setMouseCallback('output', click_event)
+    cv2.setMouseCallback('output', getClicks)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     return click_list
@@ -33,7 +32,7 @@ def orderPoints(pts):
     rect[3] = pts[np.argmax(diff)]
     return rect
 
-def four_point_topRightansform(image, pts):
+def four_point_transform(image, pts):
 
     rect = orderPoints(pts)
     (topLeft, topRight, bottomRight, bottomLeft) = rect
@@ -55,22 +54,27 @@ def four_point_topRightansform(image, pts):
     warped = cv2.warpPerspective(image, m, (maxWidth, maxHeight))
     return warped
 
-def main():
-    click_list = getPoints()
+def getRect():
     rect = np.zeros((4, 2), dtype = "float32")
     rect[0] = click_list[0]
     rect[1] = click_list[1]
     rect[2] = click_list[2]
     rect[3] = click_list[3]
-    warped = four_point_topRightansform(image, rect)
-    # show the original and warped images
+    return rect
+
+def plotImages(warped):
     cv2.namedWindow("Original", cv2.WINDOW_NORMAL)  
     cv2.resizeWindow("Original", imageOriginal.shape[0], imageOriginal.shape[1])         
     cv2.imshow("Original", imageOriginal)
     cv2.namedWindow("Warped", cv2.WINDOW_NORMAL)
     cv2.resizeWindow("Warped", imageOriginal.shape[0], imageOriginal.shape[1])         
     cv2.imshow("Warped", warped)
-    
     cv2.waitKey(0)
+
+def main():
+    click_list = getPoints()
+    rect = getRect()
+    warped = four_point_transform(image, rect)
+    plotImages(warped)
 
 main()

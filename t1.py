@@ -32,7 +32,7 @@ def orderPoints(pts):
     rect[3] = pts[np.argmax(diff)]
     return rect
 
-def four_point_transform(image, pts):
+def fourPointTransform(image, pts):
 
     rect = orderPoints(pts)
     (topLeft, topRight, bottomRight, bottomLeft) = rect
@@ -71,10 +71,36 @@ def plotImages(warped):
     cv2.imshow("Warped", warped)
     cv2.waitKey(0)
 
+def plotGraphs(image):
+   
+    warpedHistogram = plt.hist(image.ravel(),bins = 256, range = [0,256]) 
+    plt.show()
+    
+    originalHistogram = plt.hist(imageOriginal.ravel(),bins = 256, range = [0,256]) 
+    plt.show()
+
+    color = ('b','g','r')
+    for i,col in enumerate(color):
+        warpedColorHistr = cv2.calcHist([image],[i],None,[256],[0,256])
+        plt.plot(warpedColorHistr,color = col)
+        plt.xlim([0,256])
+    plt.show()
+    
+    for i,col in enumerate(color):
+        originalColorHistr = cv2.calcHist([imageOriginal],[i],None,[256],[0,256])
+        plt.plot(originalColorHistr,color = col)
+        plt.xlim([0,256])
+    plt.show()
+
+    cv2.waitKey(0)
+    
+
 def main():
     click_list = getPoints()
     rect = getRect()
-    warped = four_point_transform(image, rect)
+    warped = fourPointTransform(image, rect)
     plotImages(warped)
-
+    plotGraphs(warped)
+    
+    
 main()

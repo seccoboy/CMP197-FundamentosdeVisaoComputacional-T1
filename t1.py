@@ -7,7 +7,6 @@ imageOriginal = cv2.imread('testimages/foto1_gt.jpg')
 click_list = []
 
 def getClicks(event, x, y, flags, params):
-    # checking for left mouse clicks
     if event == cv2.EVENT_LBUTTONDOWN:
         click_list.append((x,y))
         print(x, ' ', y)
@@ -32,6 +31,15 @@ def orderPoints(pts):
     rect[3] = pts[np.argmax(diff)]
     return rect
 
+def resizeImage(image):
+    width = imageOriginal.shape[1]
+    height = imageOriginal.shape[0]
+    dim = (width, height)
+    resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
+    
+    return resized
+    
+
 def fourPointTransform(image, pts):
 
     rect = orderPoints(pts)
@@ -52,7 +60,7 @@ def fourPointTransform(image, pts):
         [0, maxHeight - 1]], dtype = "float32")
     m = cv2.getPerspectiveTransform(rect, dst)
     warped = cv2.warpPerspective(image, m, (maxWidth, maxHeight))
-    return warped
+    return resizeImage(warped)
 
 def getRect():
     rect = np.zeros((4, 2), dtype = "float32")
@@ -74,8 +82,6 @@ def plotImages(warped):
 def plotGraphs(image):
    
     warpedHistogram = plt.hist(image.ravel(),bins = 256, range = [0,256]) 
-    plt.show()
-    
     originalHistogram = plt.hist(imageOriginal.ravel(),bins = 256, range = [0,256]) 
     plt.show()
 
@@ -85,7 +91,7 @@ def plotGraphs(image):
         plt.plot(warpedColorHistr,color = col)
         plt.xlim([0,256])
     plt.show()
-    
+        
     for i,col in enumerate(color):
         originalColorHistr = cv2.calcHist([imageOriginal],[i],None,[256],[0,256])
         plt.plot(originalColorHistr,color = col)
@@ -101,6 +107,8 @@ def main():
     warped = fourPointTransform(image, rect)
     plotImages(warped)
     plotGraphs(warped)
-    
-    
+    psnr = cv2.PSNR(warped, imageOriginal, 255)
+    print("PSNR: ",psnr)
+    cv2.waitKey(0)
+
 main()

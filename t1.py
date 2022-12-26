@@ -72,10 +72,8 @@ def getRect():
 
 def plotImages(warped):
     cv2.namedWindow("Original", cv2.WINDOW_NORMAL)  
-    cv2.resizeWindow("Original", imageOriginal.shape[0], imageOriginal.shape[1])         
     cv2.imshow("Original", imageOriginal)
     cv2.namedWindow("Warped", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Warped", imageOriginal.shape[0], imageOriginal.shape[1])         
     cv2.imshow("Warped", warped)
     cv2.waitKey(0)
 
@@ -107,7 +105,7 @@ def main():
     warped = fourPointTransform(image, rect)
     plotImages(warped)
     plotGraphs(warped)
-    psnr = cv2.PSNR(warped, imageOriginal, 255)
+    psnr = cv2.PSNR(warped, imageOriginal)
     print("PSNR: ",psnr)
     cv2.waitKey(0)
 

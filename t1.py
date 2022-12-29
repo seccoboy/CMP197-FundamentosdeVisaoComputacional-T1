@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 import cv2
+import saveImage
 
 image = cv2.imread('testimages/foto1_cap1.jpg')
 imageOriginal = cv2.imread('testimages/foto1_gt.jpg')
@@ -38,7 +39,6 @@ def resizeImage(image):
     resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
     
     return resized
-    
 
 def fourPointTransform(image, pts):
 
@@ -78,24 +78,35 @@ def plotImages(warped):
     cv2.waitKey(0)
 
 def plotGraphs(image):
-   
-    warpedHistogram = plt.hist(image.ravel(),bins = 256, range = [0,256]) 
-    originalHistogram = plt.hist(imageOriginal.ravel(),bins = 256, range = [0,256]) 
+
+    fig, ax = plt.subplots(1, 2)
+    
+    ax[0].hist(image.ravel(),bins = 256, range = [0,256]) 
+    ax[1].hist(imageOriginal.ravel(),bins = 256, range = [0,256]) 
+    
+    fig.savefig("createdImages/histogramas.jpg")
     plt.show()
+     
+    fig, ax = plt.subplots(1, 2)
 
     color = ('b','g','r')
     for i,col in enumerate(color):
         warpedColorHistr = cv2.calcHist([image],[i],None,[256],[0,256])
-        plt.plot(warpedColorHistr,color = col)
         plt.xlim([0,256])
-    plt.show()
+    ax[0].plot(warpedColorHistr, label="Warped Color Histogram")
         
     for i,col in enumerate(color):
         originalColorHistr = cv2.calcHist([imageOriginal],[i],None,[256],[0,256])
-        plt.plot(originalColorHistr,color = col)
         plt.xlim([0,256])
-    plt.show()
+    ax[1].plot(originalColorHistr,label="Original Color Histogram")
 
+    ax[0].legend()
+    ax[1].legend()
+   
+    fig.savefig("createdImages/colorHistograms.jpg")
+   
+    plt.show()
+    
     cv2.waitKey(0)
     
 
@@ -103,7 +114,7 @@ def main():
     click_list = getPoints()
     rect = getRect()
     warped = fourPointTransform(image, rect)
-    plotImages(warped)
+    saveImage.main(warped, "Cortada")
     plotGraphs(warped)
     psnr = cv2.PSNR(warped, imageOriginal)
     print("PSNR: ",psnr)

@@ -32,6 +32,14 @@ def orderPoints(pts):
     rect[3] = pts[np.argmax(diff)]
     return rect
 
+def getRect():
+    rect = np.zeros((4, 2), dtype = "float32")
+    rect[0] = click_list[0]
+    rect[1] = click_list[1]
+    rect[2] = click_list[2]
+    rect[3] = click_list[3]
+    return rect
+
 def resizeImage(image):
     width = imageOriginal.shape[1]
     height = imageOriginal.shape[0]
@@ -61,14 +69,6 @@ def fourPointTransform(image, pts):
     m = cv2.getPerspectiveTransform(rect, dst)
     warped = cv2.warpPerspective(image, m, (maxWidth, maxHeight))
     return resizeImage(warped)
-
-def getRect():
-    rect = np.zeros((4, 2), dtype = "float32")
-    rect[0] = click_list[0]
-    rect[1] = click_list[1]
-    rect[2] = click_list[2]
-    rect[3] = click_list[3]
-    return rect
 
 def plotImages(warped):
     cv2.namedWindow("Original", cv2.WINDOW_NORMAL)  
@@ -118,6 +118,7 @@ def main():
     plotGraphs(warped)
     psnr = cv2.PSNR(warped, imageOriginal)
     print("PSNR: ",psnr)
+
     cv2.waitKey(0)
 
 main()

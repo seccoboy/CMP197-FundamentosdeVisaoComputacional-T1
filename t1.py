@@ -46,9 +46,7 @@ def orderPoints(pts):
 def resizeImage(imagem):
     pixel = 37.795275590551
     dim = (int(width_cm * pixel), int( height_cm * pixel))
-    
     resized = cv2.resize(imagem, dim, interpolation = cv2.INTER_AREA)
-    
     return resized
 
 
@@ -113,7 +111,7 @@ def plotGraphs(image):
     
 
 def main():
-    click_list = getPoints()
+    getPoints()
     rect = getRect()
     warped = fourPointTransform(image, rect)
     saveImage.main(warped, "Cortada")

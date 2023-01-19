@@ -44,13 +44,13 @@ def orderPoints(pts):
 
 
 def resizeImage(imagem):
+    pixel = 37.795275590551
+    dim = (int(width_cm * pixel), int( height_cm * pixel))
     
-    height_pixels, width_pixels, _ = image.shape
-    
-    dim = (int(height_pixels / height_cm), int(width_pixels / width_cm))
     resized = cv2.resize(imagem, dim, interpolation = cv2.INTER_AREA)
     
     return resized
+
 
 def fourPointTransform(image, pts):
 
@@ -73,14 +73,6 @@ def fourPointTransform(image, pts):
     m = cv2.getPerspectiveTransform(rect, dst)
     warped = cv2.warpPerspective(image, m, (maxWidth, maxHeight))
     return resizeImage(warped)
-
-def resizeImage(image):
-    width = imageOriginal.shape[1]
-    height = imageOriginal.shape[0]
-    dim = (width, height)
-    resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
-    
-    return resized
 
 def plotImages(warped):
     cv2.namedWindow("Original", cv2.WINDOW_NORMAL)  

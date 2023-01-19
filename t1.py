@@ -6,6 +6,8 @@ import saveImage
 image = cv2.imread('testimages/foto1_cap1.jpg')
 imageOriginal = cv2.imread('testimages/foto1_gt.jpg')
 click_list = []
+width_cm = float(input("Informe a largura da imagem em cm: "))
+height_cm = float(input("Informe a altura da imagem em cm: "))
 
 def getClicks(event, x, y, flags, params):
     if event == cv2.EVENT_LBUTTONDOWN:
@@ -40,11 +42,12 @@ def getRect():
     rect[3] = click_list[3]
     return rect
 
-def resizeImage(image):
-    width = imageOriginal.shape[1]
-    height = imageOriginal.shape[0]
-    dim = (width, height)
-    resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
+def resizeImage(imagem):
+    
+    height_pixels, width_pixels, _ = image.shape
+    
+    dim = (int(height_pixels / height_cm), int(width_pixels / width_cm))
+    resized = cv2.resize(imagem, dim, interpolation = cv2.INTER_AREA)
     
     return resized
 
@@ -99,10 +102,8 @@ def plotGraphs(image):
         originalColorHistr = cv2.calcHist([imageOriginal],[i],None,[256],[0,256])
         plt.xlim([0,256])
     ax[1].plot(originalColorHistr,label="Original Color Histogram")
-
     ax[0].legend()
     ax[1].legend()
-   
     fig.savefig("createdImages/colorHistograms.jpg")
    
     plt.show()
@@ -116,7 +117,7 @@ def main():
     warped = fourPointTransform(image, rect)
     saveImage.main(warped, "Cortada")
     plotGraphs(warped)
-    psnr = cv2.PSNR(warped, imageOriginal)
+    psnr = cv2.PSNR(warped, resizeImage(imageOriginal))
     print("PSNR: ",psnr)
 
     cv2.waitKey(0)
